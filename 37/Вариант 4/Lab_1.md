@@ -10,8 +10,6 @@
 import matplotlib.pyplot as plt
 import random, usage_time
 
-
-
 def by_index(a: list):
     return a[random.randint(0, len(a)) - 1]
 
