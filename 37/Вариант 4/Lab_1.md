@@ -54,9 +54,7 @@ elements = range(1, 10**5 * 16, 50000)
 function = usage_time.get_usage_time()(hor_met)
 times = [
     function(
-        [1 for _ in range(n)],
-        0.000001
-    )
+        [1 for _ in range(n)],0.000001)
     for n in elements
 ]
 
@@ -133,8 +131,7 @@ def arithmetic_mean(v: list):
 elements = range(1, 10**5 * 16, 50000)
 function = usage_time.get_usage_time()(arithmetic_mean)
 times = [
-    sum([
-        function([random.randint(1, 10)
+    sum([function([random.randint(1, 10)
             for _ in range(n)])
         for _ in range(10)]) / 10
     for n in elements
