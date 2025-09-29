@@ -122,9 +122,9 @@ plt.show()
 import matplotlib.pyplot as plt
 import random, usage_time
 
-def arithmetic_mean(v: list):
+def arithmetic_mean(a: list):
     summ = 0
-    for num in v:
+    for num in a:
         summ += num
     mean = summ / len(v)
     return mean
