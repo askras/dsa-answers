@@ -7,8 +7,9 @@
 
 
 ```python
-import random, usage_time
 import matplotlib.pyplot as plt
+import random, usage_time
+
 
 
 def by_index(a: list):
@@ -41,8 +42,8 @@ plt.show()
 
 
 ```python
-import random, usage_time
 import matplotlib.pyplot as plt
+import random, usage_time
 
 def hor_met(a: list, x):
     res = 0
@@ -77,8 +78,8 @@ plt.show()
 
 
 ```python
-import random, usage_time
 import matplotlib.pyplot as plt
+import random, usage_time
 
 
 def get_max(a: list):
@@ -118,8 +119,8 @@ plt.show()
 
 
 ```python
-import random, usage_time
 import matplotlib.pyplot as plt
+import random, usage_time
 
 def arithmetic_mean(v: list):
     summ = 0
@@ -156,8 +157,8 @@ plt.show()
 
 
 ```python
-import random, usage_time
 import matplotlib.pyplot as plt
+import random, usage_time
 
 def matrix_product_calculation(mat_A: list, mat_B: list, size: int):
     mat_res = [[0 for _ in range(size)] for _ in range(size)]
