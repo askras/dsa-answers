@@ -196,6 +196,6 @@ plt.show()
 
 
     
-![png](Untitled1_files/Untitled1_11_0.png)
+![png](Lab_Files/Untitled1_11_0.png)
     
 
