@@ -134,8 +134,7 @@ elements = range(1, 10**5 * 16, 50000)
 function = usage_time.get_usage_time()(arithmetic_mean)
 times = [
     sum([
-        function([
-            random.randint(1, 10)
+        function([random.randint(1, 10)
             for _ in range(n)])
         for _ in range(10)]) / 10
     for n in elements
