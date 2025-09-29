@@ -33,7 +33,7 @@ plt.show()
 
 
     
-![png](Untitled1_files/Untitled1_3_0.png)
+![png](Lab_Files/Untitled1_3_0.png)
     
 
 
@@ -71,7 +71,7 @@ plt.show()
 
 
     
-![png](Untitled1_files/Untitled1_5_0.png)
+![png](Lab_Files/Untitled1_5_0.png)
     
 
 
@@ -112,7 +112,7 @@ plt.show()
 
 
     
-![png](Untitled1_files/Untitled1_7_0.png)
+![png](Lab_Files/Untitled1_7_0.png)
     
 
 
@@ -152,7 +152,7 @@ plt.show()
 
 
     
-![png](Untitled1_files/Untitled1_9_0.png)
+![png](Lab_Files/Untitled1_9_0.png)
     
 
 
