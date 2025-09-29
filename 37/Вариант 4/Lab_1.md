@@ -11,8 +11,8 @@ import random, usage_time
 import matplotlib.pyplot as plt
 
 
-def by_index(v: list):
-    return v[random.randint(0, len(v)) - 1]
+def by_index(a: list):
+    return a[random.randint(0, len(a)) - 1]
 
 elements = range(1, 10**5 * 16, 50000)
 function = usage_time.get_usage_time()(by_index)
