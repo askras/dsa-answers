@@ -44,9 +44,9 @@ plt.show()
 import random, usage_time
 import matplotlib.pyplot as plt
 
-def hor_met(v: list, x):
+def hor_met(a: list, x):
     res = 0
-    for c in v:
+    for c in a:
         res = res * x + c
     return res
 
@@ -83,9 +83,9 @@ import random, usage_time
 import matplotlib.pyplot as plt
 
 
-def get_max(v: list):
+def get_max(a: list):
     max_num = 0
-    for num in v:
+    for num in a:
         if num > max_num:
             max_num = num
     return max_num
