@@ -79,7 +79,6 @@ plt.show()
 import matplotlib.pyplot as plt
 import random, usage_time
 
-
 def get_max(a: list):
     max_num = 0
     for num in a:
