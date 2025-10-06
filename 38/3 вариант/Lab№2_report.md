@@ -284,7 +284,7 @@ axes[1].grid(True)
 plt.tight_layout()
 plt.show()
 ```
-
+![photo_1_2025-10-06_23-25-06.jpg](38/3 вариант/photo_1_2025-10-06_23-25-06.jpg)
 
     
 
