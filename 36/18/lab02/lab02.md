@@ -72,7 +72,190 @@
                         attempts++        Конец
                            ⭣
                     ⭡ Вернуться к проверке**
-    **Исходники по блок-схемам лежат в task03.ipynb**
+### Исходники:
+ **Introsort**   
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, positioning}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+
+\tikzset{
+    startstop/.style = {rectangle, rounded corners, minimum width=2.5cm, minimum height=0.8cm, text centered, draw=black, fill=red!30},
+    process/.style = {rectangle, minimum width=2.5cm, minimum height=0.8cm, text centered, draw=black, fill=orange!30},
+    decision/.style = {diamond, minimum width=2.5cm, minimum height=0.8cm, text centered, draw=black, fill=green!30},
+    subprocess/.style = {rectangle, minimum width=2.5cm, minimum height=0.8cm, text centered, draw=black, fill=blue!30},
+    arrow/.style = {thick,->,>=stealth}
+}
+
+\title{lab02 - Алгоритм Introsort}
+\author{Mikhail}
+\date{Октябрь 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Блок-схема алгоритма Introsort}
+
+\begin{center}
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[node distance=1.2cm]
+
+% Nodes
+\node (start) [startstop] {Начало};
+\node (computeLimit) [process, below of=start] {Вычислить depth\_limit};
+\node (callSort) [process, below of=computeLimit] {Вызвать \_introsort()};
+\node (computeN) [process, below of=callSort] {n = end - start + 1};
+\node (conditionSmall) [decision, below of=computeN, yshift=-2cm] {n $\leq$ 16?};
+\node (insertionSort) [subprocess, below left=7cm and 2cm of conditionSmall] {Сортировка вставками};
+\node (conditionDepth) [decision, below right=1cm and 1cm of conditionSmall] {depth\_limit == 0?};
+\node (heapSort) [subprocess, below of=conditionDepth, yshift=-5cm] {Пирамидальная сортировка};
+\node (end2) [startstop, below of=heapSort, yshift=-0.3cm] {Конец};
+\node (partition) [process, below right=1.5cm and 1cm of conditionDepth] {Разделение};
+\node (recursiveLeft) [process, below of=partition] {Рекурсия: левая часть};
+\node (recursiveRight) [process, right=3cm of recursiveLeft] {Рекурсия: правая часть};
+
+% Arrows
+\draw [arrow] (start) -- (computeLimit);
+\draw [arrow] (computeLimit) -- (callSort);
+\draw [arrow] (callSort) -- (computeN);
+\draw [arrow] (computeN) -- (conditionSmall);
+
+\draw [arrow] (conditionSmall) -| node[above left] {Да} (insertionSort);
+\draw [arrow] (insertionSort) -- (end2);
+
+\draw [arrow] (conditionSmall) -| node[above right] {Нет} (conditionDepth);
+\draw [arrow] (conditionDepth) -- node[right] {Да} (heapSort);
+\draw [arrow] (heapSort) -- (end2);
+
+\draw [arrow] (conditionDepth) -| node[above right] {Нет} (partition);
+\draw [arrow] (partition) -- (recursiveLeft);
+\draw [arrow] (recursiveLeft) -- (recursiveRight);
+\draw [arrow] (recursiveRight) -- (end2);
+
+\end{tikzpicture}
+}
+\end{center}
+
+% \section{Описание алгоритма}
+
+% Introsort (интроспективная сортировка) — это гибридный алгоритм сортировки, который сочетает в себе:
+
+% \begin{itemize}
+%     \item \textbf{Быструю сортировку} - основной алгоритм для большинства случаев
+%     \item \textbf{Пирамидальную сортировку} - используется при превышении глубины рекурсии
+%     \item \textbf{Сортировку вставками} - используется для небольших массивов (n $\leq$ 16)
+% \end{itemize}
+
+% Алгоритм гарантирует время выполнения O(n log n) в худшем случае, избегая квадратичного времени выполнения быстрой сортировки.
+
+% Ключевые шаги:
+% \begin{enumerate}
+%     \item Вычислить максимальную глубину рекурсии: depth\_limit = 2 $\times$ log\textsubscript{2}(n)
+%     \item Для маленьких массивов (n $\leq$ 16) использовать сортировку вставками
+%     \item Если достигнут лимит глубины, использовать пирамидальную сортировку
+%     \item Иначе разделить массив и рекурсивно отсортировать левую и правую части
+% \end{enumerate}
+
+\end{document}
+
+**Bogosort**
+
+
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, positioning, calc}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+
+\tikzset{
+    startstop/.style = {rectangle, rounded corners, minimum width=2.5cm, minimum height=0.8cm, text centered, draw=black, fill=red!30},
+    process/.style = {rectangle, minimum width=2.5cm, minimum height=0.8cm, text centered, draw=black, fill=orange!30},
+    decision/.style = {diamond, minimum width=2.5cm, minimum height=0.8cm, text centered, draw=black, fill=green!30},
+    io/.style = {trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=blue!30},
+    arrow/.style = {thick,->,>=stealth}
+}
+
+\title{lab02 - Алгоритм Bogosort}
+\author{Mikhail}
+\date{Октябрь 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Блок-схема алгоритма Bogosort}
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}[
+    node distance=1.5cm and 0.8cm
+]
+
+
+\node (start) [startstop] {Начало};
+\node (init) [process, below=of start] {attempts = 0};
+\node (checkSorted) [decision, below=of init] {is\_sorted(arr)?};
+\node (returnTrue) [process, below left=9cm and 1.5cm of checkSorted] {Вернуть True};
+\node (endTrue) [startstop, below=of returnTrue] {Конец};
+\node (checkAttempts) [decision, below right=2cm and 1.5cm of checkSorted] {attempts < max\_attempts?};
+\node (shuffle) [process, below=of checkAttempts] {shuffle(arr)};
+\node (increment) [process, below=of shuffle] {attempts++};
+\node (returnFalse) [process, right=2cm of checkAttempts] {Вернуть False};
+
+\coordinate (leftLoop) at ($(increment.west) + (-1,0)$);
+\coordinate (rightLoop) at ($(checkSorted.east) + (1,0)$);
+
+\draw [arrow] (start) -- (init);
+\draw [arrow] (init) -- (checkSorted);
+\draw [arrow] (checkSorted) -| node[above left] {Да} (returnTrue);
+\draw [arrow] (returnTrue) -- (endTrue);
+\draw [arrow] (checkSorted) -| node[above right] {Нет} (checkAttempts);
+\draw [arrow] (checkAttempts) -- node[right] {Да} (shuffle);
+\draw [arrow] (checkAttempts) -- node[above] {Нет} (returnFalse);
+\draw [arrow] (shuffle) -- (increment);
+
+
+\draw [arrow] (returnFalse) -- ++(0,-7.5) -| (endTrue);
+
+
+\draw [arrow] (increment) -| ($(checkSorted.south) + (0,-0.5)$) -- (checkSorted.south);
+
+\end{tikzpicture}
+\caption{Блок-схема алгоритма Bogosort}
+\label{fig:bogosort}
+\end{figure}
+
+%\section{Описание алгоритма Bogosort}
+
+%Bogosort (также известный как "глупая сортировка" или "случайная сортировка") — это неэффективный алгоритм сортировки, основанный на принципе "generate and test" (генерация и проверка).
+
+%\begin{itemize}
+%    \item \textbf{Принцип работы}: Алгоритм случайным образом перемешивает массив до тех пор, пока он не окажется отсортированным
+ %   \item \textbf{Временная сложность}: 
+%        \begin{itemize}
+%            \item Лучший случай: O(n)
+%            \item Средний случай: O(n × n!)
+%            \item Худший случай: Бесконечность (теоретически)
+%        \end{itemize}
+%    \item \textbf{Пространственная сложность}: O(1)
+ %   \item \textbf{Практическое применение}: Не имеет практического применения, используется в образовательных целях для демонстрации неэффективных алгоритмов
+%\end{itemize}
+
+%Ключевые шаги:
+%\begin{enumerate}
+%    \item Установить счетчик попыток в 0
+%    \item Проверить, отсортирован ли массив
+%    \item Если массив отсортирован - вернуть результат
+%    \item Если нет - проверить, не превышен ли лимит попыток
+%    \item Если лимит не превышен - перемешать массив и увеличить счетчик
+%    \item Если лимит превышен - вернуть False (сортировка не удалась)
+%    \item Повторять до успешной сортировки или исчерпания попыток
+%\end{enumerate}
+
+\end{document}
+
 ### 4.Представить описание алгоритмов на псевдокоде:
     
 **4.1)Introsort:**
