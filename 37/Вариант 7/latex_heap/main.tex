@@ -1,0 +1,46 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}    
+\usepackage[T2A]{fontenc}      
+\usepackage[russian]{babel}    
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+
+\tikzstyle{startstop} = [ellipse, minimum width=2.5cm, minimum height=1cm,text centered, draw=black, fill=red!30]
+\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=blue!20]
+\tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=green!30]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+\begin{document}
+
+\begin{tikzpicture}[node distance=1.8cm and 3.5cm]
+
+% Блоки
+\node (start) [startstop] {Start};
+\node (n) [process, below of=start] {n = длина(a)};
+\node (build) [process, below of=n] {Построить max-кучу};
+\node (iinit) [process, below of=build] {i = n - 1};
+\node (cond) [decision, below of=iinit, yshift=-0.3cm] {i > 0?};
+\node (swap) [process, right of=cond, xshift=5cm] {Поменять a\_0 и a\_i};
+\node (heapify) [process, below of=swap] {heapify(a, 0, i)};
+\node (idecr) [process, left of=heapify, xshift=-5cm] {i = i - 1};
+\node (end) [startstop, below of=cond, yshift=-4.5cm] {End};
+
+% Стрелки
+\draw [arrow] (start) -- (n);
+\draw [arrow] (n) -- (build);
+\draw [arrow] (build) -- (iinit);
+\draw [arrow] (iinit) -- (cond);
+
+% Ромбом направо (Да)
+\draw [arrow] (cond.east) -- ++(1.5,0) -- (swap.north) node[midway,above]{Да};
+
+\draw [arrow] (swap.south) -- (heapify.north);
+\draw [arrow] (heapify.west) -- (idecr.east);
+\draw [arrow] (idecr.north) -- ++(0,1.2) -- (cond.south);
+
+% Ромбом вниз (Нет)
+\draw [arrow] (cond.south) -- ++(0,-0.5) -- (end.north) node[midway,left]{Нет};
+
+\end{tikzpicture}
+
+\end{document}
