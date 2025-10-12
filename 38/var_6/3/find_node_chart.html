@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Поиск элемента в списке</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            width: 800px;
+            height: 600px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Поиск элемента в списке</h1>
+        <canvas id="myChart" width="800" height="600"></canvas>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                try {
+                    const ctx = document.getElementById('myChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {"labels":[1000,2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000,13000,14000,15000,16000,17000,18000,19000,20000],"datasets":[{"label":"Поиск элемента","data":[0.03811139999961597,0.03225679999959539,0.04585640000004787,0.007486000000062632,0.009589599999890197,0.011194200000318233,0.012884199999825796,0.015000200000940822,0.016966600000159815,0.02137580000053276,0.023979799999506213,0.03021679999947082,0.028250600000319537,0.03121140000075684,0.04247719999984838,0.0376377999993565,0.039581599998928144,0.0497161999992386,0.048329800000647086,0.055020399998466016],"borderColor":"orange","borderWidth":2,"fill":false}]},
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Поиск элемента в списке'
+                                }
+                            },
+                            scales: {
+                                x: { 
+                                    title: { 
+                                        display: true, 
+                                        text: 'Размер списка (n)' 
+                                    },
+                                    ticks: {
+                                        maxTicksLimit: 10,
+                                        callback: function(value) {
+                                            if (value >= 1000) {
+                                                return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                                            }
+                                            return value;
+                                        }
+                                    }
+                                },
+                                y: { 
+                                    title: { 
+                                        display: true, 
+                                        text: 'Среднее время выполнения (мс)' 
+                                    },
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                } catch (error) {
+                    console.error("Ошибка при построении графика:", error);
+                    document.body.innerHTML += '<div style="color: red; padding: 20px; font-weight: bold;">Ошибка при построении графика: ' + error.message + '</div>';
+                }
+            });
+        </script>
+    </div>
+</body>
+</html>

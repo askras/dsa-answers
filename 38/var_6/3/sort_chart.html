@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Сортировка списка</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            width: 800px;
+            height: 600px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Сортировка списка</h1>
+        <canvas id="myChart" width="800" height="600"></canvas>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                try {
+                    const ctx = document.getElementById('myChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {"labels":[1000,2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000,13000,14000,15000,16000,17000,18000,19000,20000],"datasets":[{"label":"Сортировка","data":[1.989207599999645,7.15643659999987,16.129171999998654,28.85188519999938,45.700331799999546,68.91467919999923,94.56222800000032,126.30290240000177,167.4227078000011,224.15401980000024,257.0003303999998,308.85092040000166,365.88938939999645,438.0836721999993,506.0564574000018,583.0083778000014,668.5554537999997,747.8386925999991,846.6224625999996,1028.4548906000011],"borderColor":"brown","borderWidth":2,"fill":false}]},
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Сортировка списка'
+                                }
+                            },
+                            scales: {
+                                x: { 
+                                    title: { 
+                                        display: true, 
+                                        text: 'Размер списка (n)' 
+                                    },
+                                    ticks: {
+                                        maxTicksLimit: 10,
+                                        callback: function(value) {
+                                            if (value >= 1000) {
+                                                return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                                            }
+                                            return value;
+                                        }
+                                    }
+                                },
+                                y: { 
+                                    title: { 
+                                        display: true, 
+                                        text: 'Среднее время выполнения (мс)' 
+                                    },
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                } catch (error) {
+                    console.error("Ошибка при построении графика:", error);
+                    document.body.innerHTML += '<div style="color: red; padding: 20px; font-weight: bold;">Ошибка при построении графика: ' + error.message + '</div>';
+                }
+            });
+        </script>
+    </div>
+</body>
+</html>
