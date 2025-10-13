@@ -8,34 +8,6 @@
 
 ## Задания
 
-```JavaScript
-// Генерация случайного массива
-function generateRandomArray(n) {
-    const arr = [];
-    for (let i = 0; i < n; i++) {
-        arr.push(Math.floor(Math.random() * 1000));
-    }
-    return arr;
-}
-
-// Генерация отсортированного массива
-function generateSortedArray(n) {
-    const arr = [];
-    for (let i = 0; i < n; i++) {
-        arr.push(i);
-    }
-    return arr;
-}
-
-// Генерация обратно отсортированного массива
-function generateReverseSortedArray(n) {
-    const arr = [];
-    for (let i = n - 1; i >= 0; i--) {
-        arr.push(i);
-    }
-    return arr;
-}
-```
 ### Задание 1
 ```Javascript
 // Версия 1: Базовая реализация односвязного списка
