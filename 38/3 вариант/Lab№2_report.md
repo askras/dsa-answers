@@ -226,65 +226,111 @@ v = [5, 3, 4, 1]
 import random, usage_time
 import matplotlib.pyplot as plt
 
-n1_n2_n3_n4 = [1000, 5000, 10000, 100000]
-num_trials = 3
+def test_shell_sort_random(n):
+    arr = [random.randint(1, n) for _ in range(n)]
+    return shell_sort(arr)
 
-results = {
-    "Shell Sort": {"sorted": [], "reverse": [], "random": []},
-    "pancake Sort": {"sorted": [], "reverse": [], "random": []}
-}
+def test_shell_sort_sorted(n):
+    arr = list(range(n))
+    return shell_sort(arr)
 
-for n in n1_n2_n3_n4:
-    arr_sorted = list(range(n))
-    arr_reverse = list(range(n, 0, -1))
-    arr_random = [random.randint(1, n) for _ in range(n)]
+def test_shell_sort_reverse(n):
+    arr = list(range(n, 0, -1))
+    return shell_sort(arr)
 
-    if n != 100000:
-        shell_sort_func = usage_time.get_usage_time()(shell_sort)
-        t_sorted = sum(shell_sort_func(arr_sorted) for _ in range(num_trials)) / num_trials
-        t_reverse = sum(shell_sort_func(arr_reverse) for _ in range(num_trials)) / num_trials
-        t_random = sum(shell_sort_func(arr_random) for _ in range(num_trials)) / num_trials
+def test_pancake_sort_random(n):
+    arr = [random.randint(1, n) for _ in range(n)]
+    return pancake_sort(arr)
 
-        results["Shell Sort"]["sorted"].append(t_sorted)
-        results["Shell Sort"]["reverse"].append(t_reverse)
-        results["Shell Sort"]["random"].append(t_random)
+def test_pancake_sort_sorted(n):
+    arr = list(range(n))
+    return pancake_sort(arr)
 
-    pancake_sort_func = usage_time.get_usage_time()(pancake_sort)
-    t_sorted = sum(pancake_sort_func(arr_sorted) for _ in range(num_trials)) / num_trials
-    t_reverse = sum(pancake_sort_func(arr_reverse) for _ in range(num_trials)) / num_trials
-    t_random = sum(pancake_sort_func(arr_random) for _ in range(num_trials)) / num_trials
+def test_pancake_sort_reverse(n):
+    arr = list(range(n, 0, -1))
+    return pancake_sort(arr)
 
-    results["pancake Sort"]["sorted"].append(t_sorted)
-    results["pancake Sort"]["reverse"].append(t_reverse)
-    results["pancake Sort"]["random"].append(t_random)
+list_lengths = [1000, 5000, 10000, 100000]
 
+times_shell_random = []
+for length in list_lengths:
+    timed_function = get_usage_time(number=1, ndigits=5)(test_shell_sort_random)
+    execution_time = timed_function(length)
+    times_shell_random.append(execution_time)
+    print(length, execution_time)
 
-fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+plt.plot(list_lengths, times_shell_random, 'bo-')
+plt.title('Shell Sort Performance - Random Arrays')
+plt.xlabel('List Length')
+plt.ylabel('Time (seconds)')
+plt.show()
 
-# shell Sort
-axes[0].plot(n1_n2_n3_n4[:3], results["shell Sort"]["sorted"], 'go-', label='Sorted array')
-axes[0].plot(n1_n2_n3_n4[:3], results["shell Sort"]["reverse"], 'ro-', label='Reverse array')
-axes[0].plot(n1_n2_n3_n4[:3], results["shell Sort"]["random"], 'bo-', label='Random array')
-axes[0].set_title('shell Sort execution time')
-axes[0].set_xlabel('Number of elements')
-axes[0].set_ylabel('Time (seconds)')
-axes[0].legend()
-axes[0].grid(True)
+times_shell_sorted = []
+for length in list_lengths:
+    timed_function = get_usage_time(number=1, ndigits=5)(test_shell_sort_sorted)
+    execution_time = timed_function(length)
+    times_shell_sorted.append(execution_time)
+    print(length, execution_time)
 
-# pancake Sort
-axes[1].plot(n1_n2_n3_n4, results["pancake Sort"]["sorted"], 'go-', label='Sorted array')
-axes[1].plot(n1_n2_n3_n4, results["pancake Sort"]["reverse"], 'ro-', label='Reverse array')
-axes[1].plot(n1_n2_n3_n4, results["pancake Sort"]["random"], 'bo-', label='Random array')
-axes[1].set_title('pancake Sort execution time')
-axes[1].set_xlabel('Number of elements')
-axes[1].set_ylabel('Time (seconds)')
-axes[1].legend()
-axes[1].grid(True)
+plt.plot(list_lengths, times_shell_sorted, 'go-')
+plt.title('Shell Sort Performance - Sorted Arrays')
+plt.xlabel('List Length')
+plt.ylabel('Time (seconds)')
+plt.show()
 
-plt.tight_layout()
+times_shell_reverse = []
+for length in list_lengths:
+    timed_function = get_usage_time(number=1, ndigits=5)(test_shell_sort_reverse)
+    execution_time = timed_function(length)
+    times_shell_reverse.append(execution_time)
+    print(length, execution_time)
+
+plt.plot(list_lengths, times_shell_reverse, 'ro-')
+plt.title('Shell Sort Performance - Reverse Arrays')
+plt.xlabel('List Length')
+plt.ylabel('Time (seconds)')
+plt.show()
+
+list_lengths_pancake = [1000, 5000, 10000]
+times_pancake_random = []
+for length in list_lengths_pancake:
+    timed_function = get_usage_time(number=1, ndigits=5)(test_pancake_sort_random)
+    execution_time = timed_function(length)
+    times_pancake_random.append(execution_time)
+    print(length, execution_time)
+
+plt.plot(list_lengths_pancake, times_pancake_random, 'bo-')
+plt.title('Pancake Sort Performance - Random Arrays')
+plt.xlabel('List Length')
+plt.ylabel('Time (seconds)')
+plt.show()
+
+times_pancake_sorted = []
+for length in list_lengths_pancake:
+    timed_function = get_usage_time(number=1, ndigits=5)(test_pancake_sort_sorted)
+    execution_time = timed_function(length)
+    times_pancake_sorted.append(execution_time)
+    print(length, execution_time)
+
+plt.plot(list_lengths_pancake, times_pancake_sorted, 'go-')
+plt.title('Pancake Sort Performance - Sorted Arrays')
+plt.xlabel('List Length')
+plt.ylabel('Time (seconds)')
+plt.show()
+
+times_pancake_reverse = []
+for length in list_lengths_pancake:
+    timed_function = get_usage_time(number=1, ndigits=5)(test_pancake_sort_reverse)
+    execution_time = timed_function(length)
+    times_pancake_reverse.append(execution_time)
+    print(length, execution_time)
+
+plt.plot(list_lengths_pancake, times_pancake_reverse, 'ro-')
+plt.title('Pancake Sort Performance - Reverse Arrays')
+plt.xlabel('List Length')
+plt.ylabel('Time (seconds)')
 plt.show()
 ```
-![photo_1_2025-10-06_23-25-06.jpg](photo_1_2025-10-06_23-25-06.jpg)
-![photo_2_2025-10-06_23-25-06.jpg](photo_2_2025-10-06_23-25-06.jpg)
+
 
     
