@@ -332,5 +332,5 @@ plt.ylabel('Time (seconds)')
 plt.show()
 ```
 
-
+![graphics_for_sort.jpg](graphics_for_sort.jpg)
     
