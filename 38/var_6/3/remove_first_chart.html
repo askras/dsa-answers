@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Удаление элемента из начала списка</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            width: 800px;
+            height: 600px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Удаление элемента из начала списка</h1>
+        <canvas id="myChart" width="800" height="600"></canvas>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                try {
+                    const ctx = document.getElementById('myChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {"labels":[1000,2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000,13000,14000,15000,16000,17000,18000,19000,20000],"datasets":[{"label":"Удаление из начала","data":[0.07033800000044721,0.015132999999877939,0.013183400000161782,0.01130120000034367,0.013312199999927544,0.01750019999999495,0.0197758000000249,0.021540199999981267,0.024945999999908965,0.028298399999948744,0.02996400000010908,0.03506599999964237,0.03770380000041769,0.0400658000000476,0.04382459999978892,0.06397139999990031,0.06281260000014299,0.061953600000015284,0.06431199999988166,0.07332559999995283],"borderColor":"red","borderWidth":2,"fill":false}]},
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Удаление элемента из начала списка'
+                                }
+                            },
+                            scales: {
+                                x: { 
+                                    title: { 
+                                        display: true, 
+                                        text: 'Размер списка (n)' 
+                                    },
+                                    ticks: {
+                                        maxTicksLimit: 10,
+                                        callback: function(value) {
+                                            if (value >= 1000) {
+                                                return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                                            }
+                                            return value;
+                                        }
+                                    }
+                                },
+                                y: { 
+                                    title: { 
+                                        display: true, 
+                                        text: 'Среднее время выполнения (мс)' 
+                                    },
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                } catch (error) {
+                    console.error("Ошибка при построении графика:", error);
+                    document.body.innerHTML += '<div style="color: red; padding: 20px; font-weight: bold;">Ошибка при построении графика: ' + error.message + '</div>';
+                }
+            });
+        </script>
+    </div>
+</body>
+</html>
