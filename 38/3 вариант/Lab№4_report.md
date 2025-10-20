@@ -1,4 +1,4 @@
-'''
+```python
 class StackBase:
     """Базовый класс для стека"""
     def push(self, item):
@@ -532,5 +532,5 @@ def check_brackets_with_details(bracket_string):
     
     return not error_found
 
-'''
-python
+```
+
