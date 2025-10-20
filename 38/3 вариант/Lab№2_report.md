@@ -141,6 +141,7 @@ def shell_sort(arr):
 def pancake_sort(arr):
     '''Блинная сортировка'''
     n = len(arr)
+    arr = arr[:]
     for i in range(n, 1, -1):
         max_idx = 0
         for j in range(1, i):
