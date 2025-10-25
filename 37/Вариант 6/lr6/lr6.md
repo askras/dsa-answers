@@ -50,9 +50,9 @@ def series_sum(x, n):
     return series_sum(x, n - 1) + series_term(x, n)
 
 func = usage_time.get_usage_time()(series_sum)
-n = 50
+n = 1000
 degrees = [0] * n
-for i in range(1, 31):
+for i in range(1, 1001):
     degrees[i-1] = i
 times = [0] * n
 times_inc = 0
@@ -118,6 +118,10 @@ plot.ylabel("Time of executing, sec")
 \end{document}
 ```
 
+![](./recursive-1.png)
+
+Верхняя граница размерности данной задачи - 1000 рекурсивных вызовов, что подтверждается как теорией (в Python стоит ограничение на 1000 вызовов), так и практикой - у меня просто крашился алгоритм при попытке сделать больше вызовов.
+
 ### Реализация вычисления этого же ряда без использования рекурсии
 
 
@@ -151,10 +155,10 @@ def series_sum_large_n(x, n):
     return total_sum
 
 func = usage_time.get_usage_time()(series_sum_large_n)
-n = 50
+n = 500
 degrees = [0] * n
-for i in range(1, 31):
-    degrees[i-1] = i
+for i in range(1, n+1):
+    degrees[i-1] = i*500
 times = [0] * n
 times_inc = 0
 for i in degrees:
@@ -162,7 +166,7 @@ for i in degrees:
     times_inc += 1
 
 plot.plot(degrees, times, "k.--")
-plot.title("Times of executing recursive algorithm")
+plot.title("Times of executing iterative algorithm")
 plot.xlabel("Degree")
 plot.ylabel("Time of executing, sec")
 ```
@@ -176,7 +180,7 @@ plot.ylabel("Time of executing, sec")
 
 
     
-![png](lr6_files/lr6_5_1.png)
+![png](lr6_files/lr6_7_1.png)
     
 
 
@@ -214,62 +218,9 @@ plot.ylabel("Time of executing, sec")
 \end{document}
 ```
 
+![](iterative-1.png)
+
 ### Выкладки к заданию 3
-
-
-```python
-import sys
-
-def get_recursion_limit():
-    """Определение максимальной глубины рекурсии"""
-    return sys.getrecursionlimit()
-
-def estimate_max_n():
-    """
-    Оценка максимального n для рекурсивной реализации
-    С учетом того, что каждый вызов требует ~1 фрейм в стеке
-    """
-    recursion_limit = get_recursion_limit()
-    
-    # Безопасная оценка: оставляем запас для системных вызовов
-    safe_limit = recursion_limit - 100
-    
-    # Для нашей рекурсии: series_sum(x, n) вызывает series_sum(x, n-1)
-    # Глубина рекурсии = n
-    max_n = safe_limit
-    
-    print(f"Лимит рекурсии в системе: {recursion_limit}")
-    print(f"Безопасное максимальное n: {max_n}")
-    print(f"При n > {max_n} возможно переполнение стека")
-    
-    return max_n
-
-# Практическая проверка
-def test_recursion_depth():
-    """Тестирование фактической глубины рекурсии"""
-    def recursive_test(n, depth=0):
-        if n <= 0:
-            return depth
-        return recursive_test(n-1, depth+1)
-    
-    try:
-        # Поиск максимальной глубины
-        for n in [100, 500, 1000, 2000, 3000]:
-            try:
-                result = recursive_test(n)
-                print(f"n = {n}: успешно, глубина = {result}")
-            except RecursionError:
-                print(f"n = {n}: переполнение стека")
-                break
-    except RecursionError:
-        print("Достигнут предел рекурсии")
-
-# Запуск оценки
-if __name__ == "__main__":
-    estimate_max_n()
-    print("\nПрактическая проверка:")
-    test_recursion_depth()
-```
 
 
 ```python
@@ -302,7 +253,36 @@ def series_sum_cached(x, n, cache=None):
     # Сохраняем в кэш
     cache[(x, n)] = result
     return result
+
+func = usage_time.get_usage_time()(series_sum_cached)
+n = 1000
+degrees = [0] * n
+for i in range(1, 1001):
+    degrees[i-1] = i
+times = [0] * n
+times_inc = 0
+for i in degrees:
+    times[times_inc] = func(2, i)
+    times_inc += 1
+
+plot.plot(degrees, times, "k.--")
+plot.title("Times of executing recursive cached algorithm")
+plot.xlabel("Degree")
+plot.ylabel("Time of executing, sec")
 ```
+
+
+
+
+    Text(0, 0.5, 'Time of executing, sec')
+
+
+
+
+    
+![png](lr6_files/lr6_11_1.png)
+    
+
 
 
 ```python
@@ -316,12 +296,10 @@ def cache_decorator(func):
     def wrapper(x, n):
         key = (x, n)
         if key in cache:
-            print(f"Использован кэш для n={n}")
             return cache[key]
         
         result = func(x, n)
         cache[key] = result
-        print(f"Вычислен и сохранен результат для n={n}: {result:.6f}")
         return result
     
     return wrapper
@@ -343,4 +321,33 @@ def series_sum_decorated(x, n):
     
     # Рекурсивный вызов
     return series_sum_decorated(x, n - 1) + term
+
+func = usage_time.get_usage_time()(series_sum_decorated)
+n = 100
+degrees = [0] * n
+for i in range(1, n+1):
+    degrees[i-1] = i*100
+times = [0] * n
+times_inc = 0
+for i in degrees:
+    times[times_inc] = func(2, i)
+    times_inc += 1
+
+plot.plot(degrees, times, "k.--")
+plot.title("Times of executing recursive cached algorithm")
+plot.xlabel("Degree")
+plot.ylabel("Time of executing, sec")
 ```
+
+
+
+
+    Text(0, 0.5, 'Time of executing, sec')
+
+
+
+
+    
+![png](lr6_files/lr6_12_1.png)
+    
+
