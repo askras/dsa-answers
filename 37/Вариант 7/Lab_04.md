@@ -3,6 +3,7 @@
 ИУ10-37
 ## Задания
 ### Задание 1
+### 1. Реализовать стек на основе массива
 
 
 ```python
@@ -74,7 +75,7 @@ print("Стек пуст?", stack.isEmpty())
     Стек пуст? True
 
 
-### Задание 2
+### 2. Реализовать стек на основе связного списка.
 
 
 ```python
@@ -147,7 +148,7 @@ print("Стек пуст?", stack.isEmpty())
     Стек пуст? True
 
 
-### Задание 3
+### 3. Реализовать очередь на основе массива.
 
 
 ```python
@@ -227,7 +228,7 @@ print("Первый элемент:", queue.peek())
     Первый элемент: 3
 
 
-### Задание 4
+### 4. Реализовать очередь на основе связного списка.
 
 
 ```python
@@ -309,7 +310,7 @@ print("Очередь пуста?", queue.isEmpty())
     Очередь пуста? True
 
 
-#### Задание 5
+#### 5. Реализовать дек на основе массива.
 
 
 ```python
@@ -436,7 +437,7 @@ print("Итоговое состояние дека:", d)
     Итоговое состояние дека: 1 <- 10 <- 30 <- 40
 
 
-#### Задание 6
+#### 6. Реализовать дек на основе связного списка.
 
 
 ```python
@@ -573,4 +574,299 @@ print("Размер дека:", deque.size())
     Добавлено в конец: 50
     Итоговое состояние дека: 1 <-> 10 <-> 30 <-> 50
     Размер дека: 4
+
+
+### Задание 2
+
+
+```python
+class Stack:
+    """Реализация стека на массиве"""
+    def __init__(self):
+        self.items = []
+
+    def push(self, item):
+        self.items.append(item)
+
+    def pop(self):
+        if self.is_empty():
+            raise IndexError("Попытка извлечь элемент из пустого стека")
+        return self.items.pop()
+
+    def peek(self):
+        if self.is_empty():
+            return None
+        return self.items[-1]
+
+    def is_empty(self):
+        return len(self.items) == 0
+
+
+def check_brackets(sequence):
+    stack = Stack()
+    pairs = {')': '(', ']': '[', '}': '{'}
+    error = False
+
+    for char in sequence:
+        if char in "([{":
+            stack.push(char)
+        elif char in ")]}":
+            if stack.is_empty():
+                error = True
+                print(f"Ошибка: закрывающая скобка '{char}' не имеет пары.")
+                break
+            top = stack.pop()
+            if pairs[char] != top:
+                error = True
+                print(f"Ошибка: ожидалась '{pairs[char]}', а встретилась '{char}'.")
+                break
+        else:
+            print(f"Ошибка: недопустимый символ '{char}' в строке.")
+            error = True
+            break
+
+    if not error and not stack.is_empty():
+        print("Ошибка: остались незакрытые скобки.")
+        error = True
+
+    if not error:
+        print("Скобки расставлены корректно.")
+        return True
+    else:
+        print("Скобки расставлены неправильно.")
+        return False
+
+
+tests = [
+    "([]{})",
+    "([)]",
+    "((()",
+    "{[()]}",
+    "}{",
+    ""
+]
+
+for seq in tests:
+    print(f"\nПроверка строки: {seq}")
+    check_brackets(seq)
+
+```
+
+    
+    Проверка строки: ([]{})
+    Скобки расставлены корректно.
+    
+    Проверка строки: ([)]
+    Ошибка: ожидалась '(', а встретилась ')'.
+    Скобки расставлены неправильно.
+    
+    Проверка строки: ((()
+    Ошибка: остались незакрытые скобки.
+    Скобки расставлены неправильно.
+    
+    Проверка строки: {[()]}
+    Скобки расставлены корректно.
+    
+    Проверка строки: }{
+    Ошибка: закрывающая скобка '}' не имеет пары.
+    Скобки расставлены неправильно.
+    
+    Проверка строки: 
+    Скобки расставлены корректно.
+
+
+### Задание 3
+
+
+```python
+class Stack:
+    """Реализация стека на основе массива"""
+    def __init__(self):
+        self.items = []
+
+    def push(self, item):
+        self.items.append(item)
+
+    def pop(self):
+        if self.is_empty():
+            raise IndexError("Ошибка: попытка извлечь элемент из пустого стека.")
+        return self.items.pop()
+
+    def peek(self):
+        if self.is_empty():
+            return None
+        return self.items[-1]
+
+    def is_empty(self):
+        return len(self.items) == 0
+
+
+def evaluate_postfix(expression):
+    stack = Stack()
+    operators = {'+', '-', '*', '/'}
+
+    tokens = expression.split()
+
+    for token in tokens:
+        if token.isdigit():
+            stack.push(int(token))
+        elif token in operators:
+            if len(stack.items) < 2:
+                raise ValueError("Ошибка: недостаточно операндов в стеке для операции.")
+            b = stack.pop()
+            a = stack.pop()
+
+            if token == '+':
+                result = a + b
+            elif token == '-':
+                result = a - b
+            elif token == '*':
+                result = a * b
+            elif token == '/':
+                if b == 0:
+                    raise ZeroDivisionError("Ошибка: деление на ноль.")
+                result = a / b
+
+            stack.push(result)
+        else:
+            raise ValueError(f"Ошибка: недопустимый символ '{token}'.")
+
+    if len(stack.items) != 1:
+        raise ValueError("Ошибка: некорректное выражение (в стеке осталось несколько элементов).")
+
+    return stack.pop()
+
+
+examples = {
+    "2 3 +": "(2 + 3)",
+    "2 3 + 4 *": "(2 + 3) * 4",
+    "5 1 2 + 4 * + 3 -": "5 + ((1 + 2) * 4) - 3",
+    "7 2 3 * -": "7 - (2 * 3)",
+    "8 4 / 2 * 3 +": "((8 / 4) * 2) + 3"
+}
+
+for expr, desc in examples.items():
+    print(f"\nВыражение: {desc}")
+    print(f"Постфиксная форма: {expr}")
+    result = evaluate_postfix(expr)
+    print(f"Результат: {result}")
+
+```
+
+    
+    Выражение: (2 + 3)
+    Постфиксная форма: 2 3 +
+    Результат: 5
+    
+    Выражение: (2 + 3) * 4
+    Постфиксная форма: 2 3 + 4 *
+    Результат: 20
+    
+    Выражение: 5 + ((1 + 2) * 4) - 3
+    Постфиксная форма: 5 1 2 + 4 * + 3 -
+    Результат: 14
+    
+    Выражение: 7 - (2 * 3)
+    Постфиксная форма: 7 2 3 * -
+    Результат: 1
+    
+    Выражение: ((8 / 4) * 2) + 3
+    Постфиксная форма: 8 4 / 2 * 3 +
+    Результат: 7.0
+
+
+### Задание 4
+
+
+```python
+class Stack:
+    """Реализация стека на массиве"""
+    def __init__(self):
+        self.items = []
+
+    def push(self, item):
+        self.items.append(item)
+
+    def pop(self):
+        if self.is_empty():
+            raise IndexError("Попытка извлечь элемент из пустого стека.")
+        return self.items.pop()
+
+    def peek(self):
+        if self.is_empty():
+            return None
+        return self.items[-1]
+
+    def is_empty(self):
+        return len(self.items) == 0
+
+
+def infix_to_postfix(expression):
+    stack = Stack()
+    result = []
+
+    precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3}
+
+    operators = set(precedence.keys())
+
+    expression = expression.replace(" ", "")
+
+    for token in expression:
+        if token.isalnum():
+            result.append(token)
+        elif token == '(':
+            stack.push(token)
+        elif token == ')':
+            while not stack.is_empty() and stack.peek() != '(':
+                result.append(stack.pop())
+            if stack.is_empty():
+                raise ValueError("Ошибка: лишняя закрывающая скобка.")
+            stack.pop()
+        elif token in operators:
+            while (not stack.is_empty() and stack.peek() in operators and
+                   precedence[stack.peek()] >= precedence[token]):
+                result.append(stack.pop())
+            stack.push(token)
+        else:
+            raise ValueError(f"Ошибка: недопустимый символ '{token}' в выражении.")
+
+    while not stack.is_empty():
+        top = stack.pop()
+        if top in "()":
+            raise ValueError("Ошибка: несбалансированные скобки.")
+        result.append(top)
+
+    return " ".join(result)
+
+
+examples = [
+    "A + B * C",
+    "(A + B) * C",
+    "A + (B + C) * D",
+    "(A + B) * (C + D)",
+    "A + B * (C - D) / E"
+]
+
+for expr in examples:
+    postfix = infix_to_postfix(expr)
+    print(f"\nИнфиксная форма: {expr}")
+    print(f"Постфиксная форма: {postfix}")
+
+```
+
+    
+    Инфиксная форма: A + B * C
+    Постфиксная форма: A B C * +
+    
+    Инфиксная форма: (A + B) * C
+    Постфиксная форма: A B + C *
+    
+    Инфиксная форма: A + (B + C) * D
+    Постфиксная форма: A B C + D * +
+    
+    Инфиксная форма: (A + B) * (C + D)
+    Постфиксная форма: A B + C D + *
+    
+    Инфиксная форма: A + B * (C - D) / E
+    Постфиксная форма: A B C D - * E / +
 
