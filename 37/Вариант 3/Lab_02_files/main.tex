@@ -1,0 +1,68 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{tikz}
+
+\begin{document}
+
+\begin{center}
+\textbf{Блок-схема алгоритма сортировки Шелла}
+\end{center}
+
+\begin{center}
+\vspace{1cm}
+
+\begin{tikzpicture}[node distance=1.5cm]
+
+% Определяем стили
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=red!30]
+\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=orange!30]
+\tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=green!30]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+% Узлы блок-схемы (столбиком сверху вниз)
+\node (start) [startstop] {Начало};
+\node (computeH) [process, below of=start] {Вычислить h[1]...h[t]};
+\node (initK) [process, below of=computeH] {k := t; 1; -1};
+\node (kCheck) [decision, below of=initK] {hk:=h[k]};
+\node (setHk) [process, below of=kCheck] {i:=hk+1; N; 1};
+\node (initI) [process, below of=setHk] {x:=a[i]};
+\node (iCheck) [decision, below of=initI] {j:=i};
+\node (setX) [process, below of=iCheck] {j>hk и x<a[j-hk]};
+\node (setJ) [process, below of=setX] {a[j]:=a[j-hk]};
+\node (pCheck) [decision, below of=setJ] {j:=j-hk};
+\node (shift) [process, below of=pCheck] {a[j]:=x};
+\node (decJ) [process, below of=shift] {конец};
+
+% Основные вертикальные стрелки
+\draw [arrow] (start) -- (computeH);
+\draw [arrow] (computeH) -- (initK);
+\draw [arrow] (initK) -- (kCheck) node[right, pos=0.5, yshift=0.0cm] {да};
+\draw [arrow] (kCheck) -- (setHk);
+\draw [arrow] (setHk) -- (initI) node[right, pos=0.5, yshift=0.0cm] {да};;
+\draw [arrow] (initI) -- (iCheck);
+\draw [arrow] (iCheck) -- (setX);
+\draw [arrow] (setX) -- (setJ) node[right, pos=0.5, yshift=0.0cm] {да};;
+\draw [arrow] (setJ) -- (pCheck);
+\draw [arrow] (pCheck) -- (shift);
+
+% Дополнительные стрелки с подписями "да" в самом начале стрелки
+% 1. От initK к decJ (в обход справа) - ДА
+\draw [arrow] (initK.east) -- ++(3,0) node[right, yshift=0.2cm, pos=0.4] {нет} -- ++(0,-13.5) -- (decJ.east);
+
+% 2. От shift к setHk (в обход слева) - ДА
+\draw [arrow] (shift.west) -- ++(-2,0) node  -- ++(0,9) -- (setHk.west);
+
+% 3. От pCheck к setX (петля слева) - ДА
+\draw [arrow] (pCheck.west) -- ++(-1,0) node  -- ++(0,3) -- (setX.west);
+
+% 4. От setX к shift (петля справа) - ДА
+\draw [arrow] (setX.east) -- ++(1,0) node[right, yshift=0.2cm, pos=0.15] {нет} -- ++(0,-4.5) -- (shift.east);
+
+% 5. От setHk к initK (петля справа) - ДА
+\draw [arrow] (setHk.east) -- ++(1.5,0) node[right, yshift=0.2cm, pos=0.2] {нет} -- ++(0,2.5) -- (initK.east);
+
+\end{tikzpicture}
+\end{center}
+
+\end{document}
