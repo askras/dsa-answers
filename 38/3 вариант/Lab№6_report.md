@@ -120,7 +120,6 @@ def simple_memo(func):
         cache[key] = res
         return res
     return wrapper
-
 ```
 
     
