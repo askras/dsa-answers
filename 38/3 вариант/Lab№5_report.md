@@ -83,8 +83,8 @@ class HashTable2:
         for i in range(self.n):
             new_idx = (idx + i) % self.n            
             if self.data[new_idx] is None:
-                return None            
-            if self.data[new_idx] is not None and self.data[new_idx][0] == key:
+                return None
+            if self.data[new_idx] != "DELETED" and self.data[new_idx][0] == key:
                 return self.data[new_idx][1]
         return None
     
@@ -95,7 +95,7 @@ class HashTable2:
             if self.data[new_idx] is None:
                 return False            
             if self.data[new_idx][0] == key:
-                self.data[new_idx] = None
+                self.data[new_idx] = "DELETED"
                 return True
         return False
 
