@@ -9,27 +9,22 @@
 ```python
 # Задание 1.
 
-def ackermann(x, y, m=None):
+def ackermann(x, y, m):
     if x == 0:
         result = y + 1
     elif y == 0:
         result = ackermann(x - 1, 1, m)
     else:
-        inner = ackermann(x, y - 1, m)
-        result = ackermann(x - 1, inner, m)
-    
-    if m is not None:
-        return result % m
-    return result
+        inn = ackermann(x, y - 1, m)
+        result = ackermann(x - 1, inn, m)
+    return result % m
 
-def create_table(x_max, y_max, m=None):
+def sozd_table(xmax, ymax, m):
     table = []
-    for i in range(x_max + 1):
+    for i in range(xmax + 1):
         row = []
-        for j in range(y_max + 1):
-            try:
-                value = ackermann(i, j, m)
-                row.append(value)
+        for j in range(ymax + 1):
+            row.append(ackermann(i, j, m))
         table.append(row)
     return table
 ```
@@ -38,22 +33,19 @@ def create_table(x_max, y_max, m=None):
 ```python
 # Задание 2.
 
-def ackermann_iter(x, y, mod=None):
+def ackermann_it(x, y, m):
     stack = []
     stack.append((x, y))
     while stack:
-        current = stack[-1]
-        a = current[0]
-        b = current[1]
+        cur = stack[-1]
+        a = cur[0]
+        b = cur[1]
         if a == 0:
             res = b + 1
             stack.pop()
             if stack:
-                prev = stack.pop()
-                if prev[1] == -1:
-                    stack.append((prev[0] - 1, res))
-                else:
-                    stack.append((prev[0] - 1, 1))
+                pred = stack.pop()
+                stack.append((pred[0] - 1, res))
             else:
                 result = res
                 break 
@@ -62,17 +54,14 @@ def ackermann_iter(x, y, mod=None):
         else:
             stack[-1] = (a, -1)
             stack.append((a, b - 1))
-    if mod is not None:
-        return result % mod
-    return result
+    return result % m
 
-def make_table(x_max, y_max, mod=None):
+def sozd_table(xmax, ymax, m):
     table = []
-    for i in range(x_max + 1):
+    for i in range(xmax + 1):
         row = []
-        for j in range(y_max + 1):
-            val = ackermann_iter(i, j, mod)
-            row.append(val)
+        for j in range(ymax + 1):
+            row.append(ackermann(i, j, m))
         table.append(row)
     return table
 ```
@@ -81,45 +70,34 @@ def make_table(x_max, y_max, mod=None):
 ```python
 # Задание 3.
 
-def test_stack():
-    tests = [(2, 3), (3, 2), (3, 3), (4, 0), (4, 1)]
-    for x, y in tests:
-        try:
-            res = ackermann(x, y)
-            print(f"A({x},{y}) = {res}")
-        except:
-            print(f"A({x},{y}) = переполнение!")
-            break
-
-# 2. Мемоизация вручную
 cache = {}
-def ackermann_memo(x, y, mod=None):
-    key = (x, y)
-    if key in cache:
-        return cache[key]
+def ackermann_mem(x, y, m):
+    k = (x, y)
+    if k in cache:
+        return cache[k]
     if x == 0:
-        res = y + 1
+        result = y + 1
     elif y == 0:
-        res = ackermann_memo(x - 1, 1, mod)
+        result = ackermann_mem(x - 1, 1, m)
     else:
-        temp = ackermann_memo(x, y - 1, mod)
-        res = ackermann_memo(x - 1, temp, mod)
-    if mod is not None:
-        res = res % mod
-    cache[key] = res
-    return res
+        inn = ackermann_mem(x, y - 1, m)
+        result = ackermann_mem(x - 1, inn, m)
+    cache[k] = res
+    return res % m
 
 # 3. Мемоизация с декоратором
-def simple_memo(func):
-    cache = {}
-    def wrapper(x, y, mod=None):
-        key = (x, y, mod)
-        if key in cache:
-            return cache[key]
-        res = func(x, y, mod)
-        cache[key] = res
-        return res
-    return wrapper
+from functools import lru_cache
+
+@lru_cache(maxsize=None)
+def ackermann_lru(x, y, m):
+    if x == 0:
+        result = y + 1
+    elif y == 0:
+        result = ackermann_lru(x - 1, 1, m)
+    else:
+        inn = ackermann_lru(x, y - 1, m)
+        result = ackermann_lru(x - 1, inn, m)
+    return result % m
 ```
 
     
