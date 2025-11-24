@@ -15,202 +15,104 @@ class Graph:
         self.vertices = {}
         self.is_directed = directed
     
-    def add_vertex(self, vertex_name):
-        if vertex_name not in self.vertices:
-            self.vertices[vertex_name] = {}
+    def add_vertex(self, i):
+        if i not in self.vertices:
+            self.vertices[i] = {}
     
-    def add_edge(self, from_vertex, to_vertex, weight=1):
-        self.add_vertex(from_vertex)
-        self.add_vertex(to_vertex)
+    def add_edge(self, i, j, weight=1):
+        self.add_vertex(i)
+        self.add_vertex(j)
         
-        self.vertices[from_vertex][to_vertex] = weight
+        self.vertices[i][j] = weight
         if not self.is_directed:
-            self.vertices[to_vertex][from_vertex] = weight
+            self.vertices[j][i] = weight
     
-    def remove_edge(self, vertex1, vertex2):
-        if vertex1 in self.vertices and vertex2 in self.vertices[vertex1]:
-            del self.vertices[vertex1][vertex2]
+    def remove_edge(self, i, j):
+        if i in self.vertices and j in self.vertices[i]:
+            del self.vertices[i][j]
             if not self.is_directed:
-                if vertex2 in self.vertices and vertex1 in self.vertices[vertex2]:
-                    del self.vertices[vertex2][vertex1]
+                if j in self.vertices and i in self.vertices[j]:
+                    del self.vertices[j][i]
     
-    def remove_vertex(self, vertex_name):
-        if vertex_name in self.vertices:
-            for other_vertex in list(self.vertices.keys()):
-                if vertex_name in self.vertices[other_vertex]:
-                    del self.vertices[other_vertex][vertex_name]
-            del self.vertices[vertex_name]
+    def remove_vertex(self, i):
+        if i in self.vertices:
+            for j in list(self.vertices.keys()):
+                if i in self.vertices[j]:
+                    del self.vertices[j][i]
+            del self.vertices[i]
     
     def get_vertices(self):
         return list(self.vertices.keys())
     
     def get_edges(self):
         edges = []
-        for vertex in self.vertices:
-            for neighbor, w in self.vertices[vertex].items():
+        for i in self.vertices:
+            for j, w in self.vertices[i].items():
                 if self.is_directed:
-                    edges.append((vertex, neighbor, w))
+                    edges.append((i, j, w))
                 else:
-                    if vertex < neighbor:
-                        edges.append((vertex, neighbor, w))
+                    if i < j:
+                        edges.append((i, j, w))
         return edges
     
-    def bfs(self, start_vertex):
-        if start_vertex not in self.vertices:
-            return []
-        
+    def bfs(self, start):
         visited = set()
-        queue = deque([start_vertex])
+        queue = deque([start])
         order = []
-        
         while queue:
-            current = queue.popleft()
-            if current not in visited:
-                visited.add(current)
-                order.append(current)
-                for neighbor in self.vertices[current]:
-                    if neighbor not in visited:
-                        queue.append(neighbor)
+            i = queue.popleft()
+            if i not in visited:
+                visited.add(i)
+                order.append(i)
+                for j in self.vertices[i]:
+                    if j not in visited:
+                        queue.append(j)
         
         return order
     
-    def dfs(self, start_vertex):
-        if start_vertex not in self.vertices:
-            return []
-        
+    def dfs(self, start):
         visited = set()
-        stack = [start_vertex]
+        stack = [start]
         order = []
-        
         while stack:
-            current = stack.pop()
-            if current not in visited:
-                visited.add(current)
-                order.append(current)
-                neighbors = list(self.vertices[current].keys())
-                for neighbor in reversed(neighbors):
-                    if neighbor not in visited:
-                        stack.append(neighbor)
+            i = stack.pop()
+            if i not in visited:
+                visited.add(i)
+                order.append(i)
+                neighbors = list(self.vertices[i].keys())
+                for j in reversed(neighbors):
+                    if j not in visited:
+                        stack.append(j)
         
         return order
     
     def dijkstra(self, start, end):
-        if start not in self.vertices or end not in self.vertices:
-            return [], 999999
-        
-        dist = {}
-        prev = {}
-        for vertex in self.vertices:
-            dist[vertex] = 999999
-            prev[vertex] = None
-        dist[start] = 0
-        
-        heap = [(0, start)]
-        
-        while heap:
-            current_dist, current_vertex = heapq.heappop(heap)
-            
-            if current_dist > dist[current_vertex]:
-                continue
-            
-            if current_vertex == end:
-                break
-            
-            for neighbor, weight in self.vertices[current_vertex].items():
-                new_dist = current_dist + weight
-                if new_dist < dist[neighbor]:
-                    dist[neighbor] = new_dist
-                    prev[neighbor] = current_vertex
-                    heapq.heappush(heap, (new_dist, neighbor))
-        
-        path = []
-        current = end
-        while current is not None:
-            path.append(current)
-            current = prev[current]
-        
-        path.reverse()
-        
-        if path[0] != start:
-            return [], 999999
-        
-        return path, dist[end]
-    
-    def has_eulerian_cycle(self):
-        if self.is_directed:
-            for vertex in self.vertices:
-                incoming = 0
-                for other in self.vertices:
-                    if vertex in self.vertices[other]:
-                        incoming += 1
-                outgoing = len(self.vertices[vertex])
-                if incoming != outgoing:
-                    return False
-            return True
-        else:
-            for vertex in self.vertices:
-                if len(self.vertices[vertex]) % 2 != 0:
-                    return False
-            return True
-    
-    def find_eulerian_cycle(self):
-        if not self.has_eulerian_cycle():
-            return []
-        
-        temp_graph = {}
-        for vertex in self.vertices:
-            temp_graph[vertex] = dict(self.vertices[vertex])
-        
-        stack = [next(iter(self.vertices.keys()))]
-        cycle = []
-        
-        while stack:
-            current = stack[-1]
-            if temp_graph[current]:
-                next_vertex = next(iter(temp_graph[current].keys()))
-                stack.append(next_vertex)
-                del temp_graph[current][next_vertex]
-                if not self.is_directed:
-                    del temp_graph[next_vertex][current]
-            else:
-                cycle.append(stack.pop())
-        
-        return cycle[::-1]
-    
-    def hamiltonian_cycle_util(self, path, position):
-        if position == len(self.vertices):
-            last = path[position - 1]
-            first = path[0]
-            if first in self.vertices[last]:
-                return True
-            return False
-        
-        for vertex in self.vertices:
-            if vertex not in path:
-                if position == 0 or (path[position - 1] in self.vertices and vertex in self.vertices[path[position - 1]]):
-                    path[position] = vertex
-                    if self.hamiltonian_cycle_util(path, position + 1):
-                        return True
-                    path[position] = None
-        
-        return False
-    
-    def find_hamiltonian_cycle(self):
-        if len(self.vertices) == 0:
-            return []
-        
-        path = [None] * len(self.vertices)
-        path[0] = next(iter(self.vertices.keys()))
-        
-        if not self.hamiltonian_cycle_util(path, 1):
-            return []
-        
-        return path + [path[0]]
+    distances = {vertex: float('infinity') for vertex in self.vertices}
+    distances[start] = 0
+    priority_queue = [(0, start)]
+    parents = {vertex: None for vertex in self.vertices}
+    while priority_queue:
+        current_distance, current_vertex = heapq.heappop(priority_queue)
+        if current_distance > distances[current_vertex]:
+            continue
+        for neighbor, weight in self.vertices[current_vertex].items():
+            distance = current_distance + weight
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                parents[neighbor] = current_vertex
+                heapq.heappush(priority_queue, (distance, neighbor))
+    path = []
+    current = end
+    while current is not None:
+        path.append(current)
+        current = parents[current]
+    path.reverse()
+    return path, distances[end]
     
     def __str__(self):
         result = "Граф:\n"
-        for vertex in self.vertices:
-            result += f"{vertex}: {self.vertices[vertex]}\n"
+        for i in self.vertices:
+            result += f"{i}: {self.vertices[i]}\n"
         return result
 ```
 
@@ -230,8 +132,6 @@ def main():
         print("6. Обход в ширину (BFS)")
         print("7. Обход в глубину (DFS)")
         print("8. Алгоритм Дейкстры")
-        print("9. Эйлеров цикл")
-        print("10. Гамильтонов цикл")
         print("0. Выход")
         
         choice = input("Выберите: ")
@@ -283,20 +183,6 @@ def main():
             else:
                 print("Путь не найден")
                 
-        elif choice == '9':
-            if g.has_eulerian_cycle():
-                cycle = g.find_eulerian_cycle()
-                print(f"Эйлеров цикл: {' -> '.join(cycle)}")
-            else:
-                print("Эйлеров цикл не существует")
-                
-        elif choice == '10':
-            cycle = g.find_hamiltonian_cycle()
-            if cycle:
-                print(f"Гамильтонов цикл: {' -> '.join(cycle)}")
-            else:
-                print("Гамильтонов цикл не найден")
-                
         elif choice == '0':
             break
 ```
@@ -307,7 +193,6 @@ def main():
 ```python
 def task_4():
     g = Graph(directed=True)
-    
     edges = [
         ('1', '2', 8), ('1', '3', 3),
         ('2', '4', 1), ('2', '5', 5),
@@ -315,27 +200,18 @@ def task_4():
         ('5', '6', 1), ('5', '4', 1),
         ('5', '7', 12), ('6', '7', 7)
     ]
-    
     for v1, v2, w in edges:
         g.add_edge(v1, v2, w)
-    
     print("Задание 4:")
     print(g)
-    
     start, end = '2', '6'
     path, distance = g.dijkstra(start, end)
-    
-    if path:
-        print(f"Путь от {start} до {end}: {' -> '.join(path)}")
-        print(f"Длина: {distance}")
-    else:
-        print("Путь не найден")
-    
+    print(f"Путь от {start} до {end}: {' -> '.join(path)}")
+    print(f"Длина: {distance}")
     return path, distance
 
 def task_5():    
     g = Graph(directed=False)
-    
     edges = [
         ('1', '2', 6), ('1', '5', 2),
         ('2', '5', 1), ('2', '3', 9),
@@ -345,22 +221,14 @@ def task_5():
         ('4', '8', 4), ('5', '6', 7),
         ('6', '7', 4), ('7', '8', 16)
     ]
-    
     for v1, v2, w in edges:
-        g.add_edge(v1, v2, w)
-    
+        g.add_edge(v1, v2, w
     print("Задание 5:")
     print(g)
-    
     start, end = '5', '8'
     path, distance = g.dijkstra(start, end)
-    
-    if path:
-        print(f"Путь от {start} до {end}: {' -> '.join(path)}")
-        print(f"Длина: {distance}")
-    else:
-        print("Путь не найден")
-    
+    print(f"Путь от {start} до {end}: {' -> '.join(path)}")
+    print(f"Длина: {distance}")
     return g, path, distance
 
 task_4()
