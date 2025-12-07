@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>График Задания 2</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+        }
+        .container {
+            width: 800px;
+            height: 600px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Эмпирический анализ временной сложности (Задание 2, Вариант 6)</h1>
+        <div style="width: 100%; height: 100%;">
+            <canvas id="myChart"></canvas>
+        </div>
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                try {
+                    const ctx = document.getElementById('myChart').getContext('2d');
+                    
+                    const config = {
+                        type: 'line',
+                        data: {"labels":[140,280,420,560,700,840,980,1120,1260,1400],"datasets":[{"label":"Умножение матриц (O(n^3))","data":[15.223439600039274,88.62200899999588,331.2032081999816,869.0767143999925,2034.1218957999954,3642.377141199983,9899.552988800011,18320.637570799932,31553.870595400036,47696.26893020002],"borderColor":"rgba(255, 99, 132, 1)","backgroundColor":"rgba(255, 99, 132, 0.2)","borderWidth":2,"pointRadius":4,"fill":false}]},
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Зависимость времени выполнения от размера матрицы n',
+                                    font: { size: 16 }
+                                },
+                                legend: {
+                                    position: 'top'
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return context.dataset.label + ': ' + context.parsed.y.toFixed(4) + ' мс';
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Размер матрицы (n)'
+                                    },
+                                    ticks: {
+                                        maxTicksLimit: 10,
+                                        callback: function(value) {
+                                            if (value >= 1000) {
+                                                return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                                            }
+                                            return value;
+                                        }
+                                    }
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'Среднее время выполнения (мс)'
+                                    },
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    };
+                    
+                    new Chart(ctx, config);
+                } catch (error) {
+                    console.error("Ошибка при построении графика:", error);
+                    document.body.innerHTML = '<div style="color: red; padding: 20px; font-weight: bold;">Ошибка при построении графика: ' + error.message + '</div>';
+                }
+            });
+        </script>
+    </div>
+</body>
+</html>
