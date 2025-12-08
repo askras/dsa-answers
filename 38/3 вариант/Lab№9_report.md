@@ -7,150 +7,118 @@
 
 ```python
 import hashlib
-import math
 
 class RossignolCipher:
+    
     def __init__(self, key):
-        self.key = self._generate_key(key)
-        self.table = self._create_table()
+        self.key = key
+        self.keynum = 0
+        self.makekey()
+        self.table = []
+        self.maketable()
 
-    def _generate_key(self, key):
-        # Генерация числового ключа на основе хеша
-        return int(hashlib.sha256(key.encode()).hexdigest(), 16) % (10**8)
+    def makekey(self):
+        x = hashlib.sha256(self.key.encode()).hexdigest()
+        y = int(x, 16)
+        self.keynum = y % 100000000
 
-    def _create_table(self):
-        # Создание таблицы 5x5 с буквами (I и J объединены)
-        alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ"
-        table = []
-        for i in range(5):
-            row = []
-            for j in range(5):
-                index = (i * 5 + j + self.key) % 25
-                row.append(alphabet[index])
-            table.append(row)
-        return table
+    def maketable(self):
+        abc = "ABCDEFGHIKLMNOPQRSTUVWXYZ"
+        for row in range(5):
+            line = []
+            for col in range(5):
+                pos = (row * 5 + col + self.keynum) % 25
+                line.append(abc[pos])
+            self.table.append(line)
 
-    def _char_to_coords(self, char):
-        # Поиск координат символа в таблице
-        char = char.upper().replace('J', 'I')
-        for i, row in enumerate(self.table):
-            for j, ch in enumerate(row):
-                if ch == char:
-                    return i, j
-        raise ValueError(f"Символ {char} не найден в таблице")
-
-    def _coords_to_char(self, i, j):
-        # Получение символа по координатам
-        return self.table[i][j]
+    def findcoords(self, ch):
+        ch = ch.upper()
+        if ch == "J":
+            ch = "I"
+        for r in range(5):
+            for c in range(5):
+                if self.table[r][c] == ch:
+                    return r, c
+        return 0, 0
 
     def encrypt(self, text):
-        # Шифрование текста
-        encrypted = []
-        for char in text.upper():
-            if char.isalpha():
-                i, j = self._char_to_coords(char)
-                # Применяем перестановку на основе ключа
-                new_i = (i + self.key) % 5
-                new_j = (j + self.key) % 5
-                encrypted.append(self._coords_to_char(new_i, new_j))
+        result = ""
+        text = text.upper()
+        for letter in text:
+            if letter.isalpha():
+                r, c = self.findcoords(letter)
+                newr = (r + self.keynum) % 5
+                newc = (c + self.keynum) % 5
+                result += self.table[newr][newc]
             else:
-                encrypted.append(char)
-        return ''.join(encrypted)
+                result += letter
+        return result
 
     def decrypt(self, text):
-        # Расшифровка текста
-        decrypted = []
-        for char in text.upper():
-            if char.isalpha():
-                i, j = self._char_to_coords(char)
-                # Обратная перестановка
-                new_i = (i - self.key) % 5
-                new_j = (j - self.key) % 5
-                decrypted.append(self._coords_to_char(new_i, new_j))
+        result = ""
+        text = text.upper()
+        for letter in text:
+            if letter.isalpha():
+                r, c = self.findcoords(letter)
+                newr = (r - self.keynum) % 5
+                newc = (c - self.keynum) % 5
+                result += self.table[newr][newc]
             else:
-                decrypted.append(char)
-        return ''.join(decrypted)
+                result += letter
+        return result
+
 
 class DamgardJurikCipher:
+    
     def __init__(self, key):
-        self.key = self._generate_key(key)
+        self.key = key
+        self.numkey = 0
+        self.calcKey()
 
-    def _generate_key(self, key):
-        # Генерация ключа на основе хеша
-        return int(hashlib.sha256(key.encode()).hexdigest(), 16)
+    def calcKey(self):
+        h = hashlib.sha256(self.key.encode()).hexdigest()
+        self.numkey = int(h, 16)
 
-    def _pad_text(self, text):
-        # Дополнение текста до длины, кратной 8
-        padding_length = 8 - (len(text) % 8)
-        return text + ' ' * padding_length
+    def addspaces(self, t):
+        n = len(t) % 8
+        if n != 0:
+            t = t + " " * (8 - n)
+        return t
 
-    def _unpad_text(self, text):
-        # Удаление дополнения
-        return text.rstrip()
+    def removespaces(self, t):
+        return t.rstrip()
 
-    def _block_permutation(self, block):
-        # Перестановка битов в блоке на основе ключа
-        key_hash = hashlib.sha256(str(self.key).encode()).digest()
-        permuted_block = []
-        for i, char in enumerate(block):
-            key_byte = key_hash[i % len(key_hash)]
-            new_char = chr((ord(char) + key_byte) % 256)
-            permuted_block.append(new_char)
-        return ''.join(permuted_block)
+    def mixblock(self, blk):
+        mixed = []
+        keybytes = hashlib.sha256(str(self.numkey).encode()).digest()
+        for i in range(len(blk)):
+            kb = keybytes[i % len(keybytes)]
+            newch = chr((ord(blk[i]) + kb) % 256)
+            mixed.append(newch)
+        return "".join(mixed)
 
-    def _inverse_block_permutation(self, block):
-        # Обратная перестановка битов в блоке
-        key_hash = hashlib.sha256(str(self.key).encode()).digest()
-        original_block = []
-        for i, char in enumerate(block):
-            key_byte = key_hash[i % len(key_hash)]
-            original_char = chr((ord(char) - key_byte) % 256)
-            original_block.append(original_char)
-        return ''.join(original_block)
+    def unmixblock(self, blk):
+        unmixed = []
+        keybytes = hashlib.sha256(str(self.numkey).encode()).digest()
+        for i in range(len(blk)):
+            kb = keybytes[i % len(keybytes)]
+            oldch = chr((ord(blk[i]) - kb) % 256)
+            unmixed.append(oldch)
+        return "".join(unmixed)
 
     def encrypt(self, text):
-        # Шифрование текста
-        padded_text = self._pad_text(text)
-        encrypted_blocks = []
-        for i in range(0, len(padded_text), 8):
-            block = padded_text[i:i+8]
-            permuted_block = self._block_permutation(block)
-            encrypted_blocks.append(permuted_block)
-        return ''.join(encrypted_blocks)
+        text = self.addspaces(text)
+        crypted = ""
+        for i in range(0, len(text), 8):
+            piece = text[i:i+8]
+            crypted += self.mixblock(piece)
+        return crypted
 
     def decrypt(self, text):
-        # Расшифровка текста
-        decrypted_blocks = []
+        decrypted = ""
         for i in range(0, len(text), 8):
-            block = text[i:i+8]
-            original_block = self._inverse_block_permutation(block)
-            decrypted_blocks.append(original_block)
-        return self._unpad_text(''.join(decrypted_blocks))
-
-if __name__ == "__main__":
-    key = "фф12К52"
-    text = "HELLO WORLD"
-
-    # Шифр Россиньоля
-    rossignol = RossignolCipher(key)
-    encrypted_rossignol = rossignol.encrypt(text)
-    decrypted_rossignol = rossignol.decrypt(encrypted_rossignol)
-
-    print("Россиньоль:")
-    print(f"Исходный: {text}")
-    print(f"Зашифрованный: {encrypted_rossignol}")
-    print(f"Расшифрованный: {decrypted_rossignol}")
-    print(f"Совпадение: {text.upper() == decrypted_rossignol}")
-
-    # Криптосистема Дамгорда-Юрика
-    damgard_jurik = DamgardJurikCipher(key)
-    encrypted_damgard = damgard_jurik.encrypt(text)
-    decrypted_damgard = damgard_jurik.decrypt(encrypted_damgard)
-
-    print("\nДамгорд-Юрик:")
-    print(f"Исходный: {text}")
-    print(f"Зашифрованный: {encrypted_damgard}")
-    print(f"Расшифрованный: {decrypted_damgard}")
-    print(f"Совпадение: {text == decrypted_damgard}")
+            piece = text[i:i+8]
+            decrypted += self.unmixblock(piece)
+        return self.removespaces(decrypted)
 
 ```
