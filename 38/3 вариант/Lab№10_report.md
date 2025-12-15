@@ -1,30 +1,30 @@
 ```python
 
 # Алгоритм 1: Рюкзак с дроблением
-def f1(items, capacity):
+def f1(items, vmest):
     items.sort(key=lambda x: x[0]/x[1], reverse=True)
-    value = 0
+    cena = 0
     for price, weight in items:
-        if capacity >= weight:
-            value += price
-            capacity -= weight
+        if vmest >= weight:
+            value += cena
+            vmest -= weight
         else:
-            value += price * (capacity / weight)
+            cena += cena * (vmest / weight)
             break
-    return value
+    return cena
 
 # Алгоритм 2: Покрытие отрезками
-def f2(segments, target):
-    segments.sort()
-    result = []
-    current = target[0]
-    for start, end in segments:
-        if start <= current:
-            result.append((start, end))
-            current = end
-            if current >= target[1]:
+def f2(otr, target):
+    otr.sort()
+    res = []
+    curr = target[0]
+    for start, end in otr:
+        if start <= curr:
+            res.append((start, end))
+            curr = end
+            if curr >= target[1]:
                 break
-    return result
+    return res
 
 # Алгоритм 3: Поиск кратчайших путей
 def f3(graph):
@@ -42,13 +42,13 @@ def f3(graph):
 
 # Алгоритм 4: Размен монет
 def f4(coins, amount):
-    dp = [float('inf')] * (amount + 1)
-    dp[0] = 0
+    res = [float('inf')] * (amount + 1)
+    res[0] = 0
     for i in range(1, amount + 1):
         for coin in coins:
             if i >= coin:
-                dp[i] = min(dp[i], dp[i - coin] + 1)
-    return dp[amount] if dp[amount] != float('inf') else -1
+                res[i] = min(res[i], res[i - coin] + 1)
+    return res[amount] if res[amount] != float('inf') else -1
 
 # Алгоритм 5: Генерация разбиений множества
 def f5(elements):
@@ -56,69 +56,69 @@ def f5(elements):
         return [[]]
     result = []
     first = elements[0]
-    for partition in set_partitions(elements[1:]):
-        result.append([[first]] + partition)
-        for i in range(len(partition)):
-            new_partition = [list(s) for s in partition]
-            new_partition[i] = [first] + new_partition[i]
-            result.append(new_partition)
+    for parti in f5(elements[1:]):
+        result.append([[first]] + parti)
+        for i in range(len(parti)):
+            newparti = [list(s) for s in parti]
+            newparti[i] = [first] + newparti[i]
+            result.append(newparti)
     return result
 
 # Алгоритм 6: Генетический алгоритм
 def f6(func):
-    solutions = [random.random() for _ in range(50)]
+    solutions = [random.random() for i in range(50)]
     best = max(solutions, key=func)
-    for _ in range(100):
-        new_solutions = []
-        for _ in range(50):
+    for i in range(100):
+        newsolut = []
+        for j in range(50):
             p1 = random.choice(solutions)
             p2 = random.choice(solutions)
             child = (p1 + p2) / 2
             if random.random() < 0.2:
                 child += random.uniform(-1, 1)
-            new_solutions.append(child)
-        solutions = new_solutions
-        current_best = max(solutions, key=func)
-        if func(current_best) > func(best):
-            best = current_best
+            newsolut.append(child)
+        solutions = newsolut
+        currentbest = max(solutions, key=func)
+        if func(currentbest) > func(best):
+            best = currentbest
     return best, func(best)
 
 # Алгоритм 7: Задача коммивояжера
-def f7(distances):
-    n = len(distances)
+def f7(lens):
+    n = len(lens)
     visited = [False] * n
     path = [0]
     visited[0] = True
     total = 0
     for _ in range(n - 1):
         last = path[-1]
-        nearest = -1
-        min_dist = float('inf')
+        near = -1
+        mindist = float('inf')
         for i in range(n):
-            if not visited[i] and distances[last][i] < min_dist:
-                min_dist = distances[last][i]
-                nearest = i
-        path.append(nearest)
-        visited[nearest] = True
-        total += min_dist
-    total += distances[path[-1]][0]
+            if not visited[i] and lens[last][i] < mindist:
+                mindist = lens[last][i]
+                near = i
+        path.append(near)
+        visited[near] = True
+        total += mindist
+    total += lens[path[-1]][0]
     return total, path
 
 # Алгоритм 8: Покрытие множества
-def f8(all_items, groups):
-    need = set(all_items) 
-    answer = []
+def f8(items, groups):
+    need = set(items) 
+    res = []
     while need:
-        best_group = None
-        best_cover = 0
-        for group in groups:
-            new_cover = len(need & set(group))
-            if new_cover > best_cover:
-                best_cover = new_cover
-                best_group = group
-        if not best_group:
+        bestgroup = None
+        bestcover = 0
+        for i in groups:
+            newcover = len(need & set(i))
+            if newcover > bestcover:
+                bestcover = newcover
+                bestgroup = i
+        if not bestgroup:
             break
-        answer.append(best_group)
-        need -= set(best_group)
-    return answer
+        res.append(bestgroup)
+        need -= set(bestgroup)
+    return res
 ```
