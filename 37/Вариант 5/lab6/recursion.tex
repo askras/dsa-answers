@@ -1,0 +1,57 @@
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows.meta, positioning, shapes.geometric}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\tikzstyle{process} = [rectangle, 
+minimum width=1.5cm, 
+minimum height=0.8cm, 
+text centered, 
+text width=2cm, 
+draw=black, 
+fill=orange!30]
+
+\tikzstyle{decision} = [diamond, 
+minimum width=1.5cm, 
+minimum height=0.8cm, 
+text centered, 
+draw=black, 
+fill=green!30]
+\tikzset{
+    %process/.style = {rectangle, draw, text width=6em, text centered, minimum height=1.5em},
+    %decision/.style = {diamond, draw, text width=5.5em, text centered, aspect=2, minimum height=1.5em},
+    answer/.style = {rectangle, draw, text width=2em, text centered, minimum height=1em, fill=gray!20},
+    arrow/.style = {thick, -Stealth}
+}
+
+\begin{document}
+\begin{tikzpicture}[xshift={(-3cm)}, node distance=0.8cm and 1cm]
+%Nodes 
+\node (process) [process] {START};
+\node (process1) [process, below=of process] {get N};
+\node (decision) [decision, below=of process1] {N=1};
+\node (yes1) [answer, left =of decision] {yes};
+\node (no1) [answer, right =of decision] {no};
+\node (process2) [process, below=of no1] {evaluate the expression};
+\node (process3) [process, below=of process2] {recursive line(x,n-1)};
+\node (process4) [process, below=of process3] {new level of recursion};
+\node (process5) [process, below=of decision, yshift=-5cm] {return the result};
+
+
+
+
+%ARrrows
+\draw [arrow] (process) -- (process1);
+\draw [arrow] (decision) -- (yes1);
+\draw [arrow] (process1) -- (decision);
+\draw [arrow] (decision) -- (no1);
+\draw [arrow] (no1) -- (process2);
+\draw [arrow] (process2) -- (process3);
+\draw [arrow] (process3) -- (process4);
+\draw [arrow] (process4) |- (process5);
+\draw [arrow] (yes1) |- (process5);
+
+
+
+\end{tikzpicture}
+\end{document}
