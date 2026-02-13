@@ -1,0 +1,38 @@
+\documentclass[tikz,border=2mm]{standalone}
+\usepackage[utf8]{inputenc}    
+\usepackage[T2A]{fontenc}      
+\usepackage[russian]{babel}    
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+
+\tikzstyle{startstop} = [ellipse, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=gray!20]
+\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=blue!20]
+\tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=green!20, aspect=2]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+\begin{document}
+
+\begin{tikzpicture}[node distance=2cm]
+
+% Nodes
+\node (start) [startstop] {Начало};
+\node (init) [process, below of=start, yshift=-0.5cm] {i = 2};
+\node (check_i) [decision, below of=init, yshift=-0.5cm] {$i \le n$?};
+\node (compare) [decision, below of=check_i, yshift=-0.5cm] {$A[i] \ge A[i-1]$?};
+\node (increment) [process, right of=compare, xshift=5cm] {i = i + 1};
+\node (swap) [process, below of=compare, yshift=-0.5cm] {Поменять $A[i]$ и $A[i-1]$, i = i - 1};
+\node (stop) [startstop, right of=check_i, xshift=5cm] {Конец};
+
+% Arrows
+\draw [arrow] (start) -- (init);
+\draw [arrow] (init) -- (check_i);
+\draw [arrow] (check_i.east) -- ++(1.5,0) -- (stop.west) node[midway, above] {Нет};
+\draw [arrow] (check_i.south) -- (compare.north) node[midway, right] {Да};
+\draw [arrow] (compare.east) -- (increment.west) node[midway, above] {Да};
+\draw [arrow] (increment.south) |- (check_i.east);
+\draw [arrow] (compare.south) -- (swap.north) node[midway, right] {Нет};
+\draw [arrow] (swap.south) |- (check_i.south);
+
+\end{tikzpicture}
+
+\end{document}
